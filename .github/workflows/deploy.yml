@@ -3,6 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: ["master"]  # 只在 master 分支 push 时触发
+    permissions:  # 添加权限配置
+      id-token: write  # 允许获取 OIDC 令牌
+      contents: read   # 读取仓库内容
+      pages: write     # 写入 GitHub Pages
 
 jobs:
   build-and-deploy:
