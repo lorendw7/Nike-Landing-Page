@@ -2,28 +2,23 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["master"]  # 只在 master 分支 push 时触发
+    branches: ["master"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
     permissions:  # 添加权限配置
       id-token: write  # 允许获取 OIDC 令牌
       contents: read   # 读取仓库内容
       pages: write     # 写入 GitHub Pages
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 22  # 选择你的 Node 版本
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build  # 运行你的构建命令
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
+          node-version: 20
+      - run: npm install
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./dist  # 替换为你的构建输出目录
+      - uses: actions/deploy-pages@v2  # 需要 id-token: write
