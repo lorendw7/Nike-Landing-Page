@@ -7,18 +7,28 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:  # 添加权限配置
-      id-token: write  # 允许获取 OIDC 令牌
-      contents: read   # 读取仓库内容
-      pages: write     # 写入 GitHub Pages
+    permissions:
+      id-token: write
+      contents: read   # 如果是私有子模块需要改为 write
+      pages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 添加此项确保完整检出历史
+
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
+
       - run: npm install
       - run: npm run build
+
+      # 增加目录验证步骤
+      - name: List files
+        run: ls -R ./dist
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist  # 替换为你的构建输出目录
-      - uses: actions/deploy-pages@v3 # 需要 id-token: write
+          path: ./dist
+
+      - uses: actions/deploy-pages@v3
